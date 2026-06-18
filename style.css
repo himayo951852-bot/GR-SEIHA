@@ -1,10 +1,16 @@
-/* ===== 命运扳机大手子 · style.css v2 ===== */
+/* ===== 命运扳机大手子 · style.css v3 ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/*
+  缩放基准：目标在 2560px 宽屏下显示约 2000px 宽的内容区
+  用 clamp 做流体字体，小屏不破坏，大屏自动放大
+  1rem-base = clamp(16px, 1.04vw, 22px)
+*/
+html { font-size: clamp(16px, 1.04vw, 22px); }
 
 :root {
   --bg: #0f0f18;
-  --card-radius: 10px;
-  --popup-bg: #1a1a2e;
+  --card-radius: 14px;
   --accent: #f9d71c;
   --text: #ececec;
   --sub-text: #999;
@@ -14,8 +20,7 @@
 
 body {
   background-color: #e8e4de;
-  background-image:
-    url('bg.png');
+  background-image: url('bg.png');
   background-size: cover;
   background-position: center top;
   background-attachment: fixed;
@@ -27,7 +32,7 @@ body {
   align-items: center;
 }
 
-/* 全局白色磨砂遮罩：只覆盖下半部分，让背景图上方可见 */
+/* 白色磨砂遮罩：上方露出背景插画，下方白化 */
 body::after {
   content: '';
   position: fixed;
@@ -44,30 +49,30 @@ body::after {
   z-index: 0;
 }
 
-/* 内容层要在遮罩之上 */
+/* 内容层在遮罩之上 */
 header, main, #result-panel, #output-wrap { position: relative; z-index: 1; }
 
 /* ---- Header ---- */
 header {
   text-align: center;
-  padding: 52vh 20px 16px;
+  /* 52vh 留出上方背景图展示区 */
+  padding: 52vh 1.25rem 1rem;
+  width: 100%;
 }
 .site-title {
-  font-size: 1.9rem;
+  font-size: 2.8rem;
   font-weight: 900;
-  letter-spacing: 3px;
+  letter-spacing: 0.18em;
   background: linear-gradient(135deg,#c8860a,#d44a1a,#b01033);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: none;
-  /* 白底下加描边增强可读性 */
   filter: drop-shadow(0 1px 2px rgba(255,255,255,0.6));
 }
 .site-sub {
   color: #444;
-  margin-top: 6px;
-  font-size: 0.85rem;
+  margin-top: 0.45rem;
+  font-size: 1.1rem;
   text-shadow: 0 1px 3px rgba(255,255,255,0.8);
 }
 
@@ -75,10 +80,11 @@ header {
 #main-layout {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 10px 20px 0;
+  gap: 1.2rem;
+  padding: 0.75rem 2rem 0;
   width: 100%;
-  max-width: 900px;
+  /* 5列×350px + 4gap×16px + 图例200px ≈ 1964px，用 clamp 自适应 */
+  max-width: clamp(900px, 84vw, 2000px);
 }
 
 /* ---- Left col ---- */
@@ -88,16 +94,18 @@ header {
 #character-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  gap: clamp(8px, 0.7rem, 18px);
   width: 100%;
 }
 
+/* 单卡目标：宽度由 grid 均分，高度约 600px（在2560宽时） */
 .char-card {
   border-radius: var(--card-radius);
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  height: 160px;
+  /* clamp: 最小240px, 流体, 最大600px */
+  height: clamp(240px, 28vw, 600px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -110,23 +118,21 @@ header {
   box-shadow: 0 2px 12px rgba(0,0,0,0.12);
 }
 .char-card:hover {
-  transform: translateY(-3px) scale(1.04);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.28);
 }
-.char-card.selected {
-  border-color: rgba(255,255,255,0.5);
-}
+.char-card.selected { border-color: rgba(255,255,255,0.6); }
 .char-card.fav {
   border-color: #e94560;
-  box-shadow: 0 0 0 3px rgba(233,69,96,0.4);
+  box-shadow: 0 0 0 4px rgba(233,69,96,0.4);
   animation: fav-pulse 1.4s ease-in-out infinite;
 }
 @keyframes fav-pulse {
-  0%,100% { box-shadow: 0 0 0 3px rgba(233,69,96,0.4); }
-  50%      { box-shadow: 0 0 0 7px rgba(233,69,96,0.1); }
+  0%,100% { box-shadow: 0 0 0 4px rgba(233,69,96,0.4); }
+  50%      { box-shadow: 0 0 0 10px rgba(233,69,96,0.1); }
 }
 
-/* 角色头像 —— 铺满整个卡片 */
+/* 角色头像铺满卡片 */
 .char-avatar {
   position: absolute;
   inset: 0;
@@ -153,57 +159,59 @@ header {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   z-index: 2;
-  padding: 4px 4px 5px;
-  background: linear-gradient(transparent, rgba(0,0,0,0.76) 55%);
+  padding: 0.4rem 0.4rem 0.55rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.78) 55%);
   border-radius: 0 0 var(--card-radius) var(--card-radius);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
 }
 .char-name {
-  font-size: 0.78rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #fff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9);
   text-align: center;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
 }
 .char-level-badge {
-  font-size: 0.62rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--accent);
-  height: 12px;
+  min-height: 1em;
   text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
 /* ---- 按钮行 ---- */
 #btn-row {
   display: flex;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 1rem;
+  margin-top: 1.2rem;
   justify-content: center;
 }
 #btn-confirm {
   background: linear-gradient(135deg,#e8976f,#e94560);
   color: #fff;
   border: none;
-  border-radius: 10px;
-  padding: 11px 40px;
-  font-size: 1rem;
+  border-radius: 12px;
+  padding: 0.85rem 3rem;
+  font-size: 1.25rem;
   font-weight: 800;
   cursor: pointer;
-  letter-spacing: 2px;
+  letter-spacing: 0.15em;
   transition: transform 0.14s, opacity 0.14s;
+  box-shadow: 0 4px 16px rgba(233,69,96,0.35);
 }
 #btn-confirm:hover { transform: scale(1.04); opacity: 0.9; }
 #btn-reset {
   background: rgba(0,0,0,0.07);
   color: #555;
-  border: 1px solid rgba(0,0,0,0.15);
-  border-radius: 10px;
-  padding: 11px 24px;
-  font-size: 0.9rem;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  border-radius: 12px;
+  padding: 0.85rem 1.8rem;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.14s;
 }
@@ -212,18 +220,17 @@ header {
 /* ---- 右侧得分表 ---- */
 #legend-panel {
   flex-shrink: 0;
-  width: 96px;
+  width: clamp(110px, 9vw, 200px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
-  padding-top: 4px;
+  padding-top: 0.25rem;
 }
 .legend-title {
-  font-size: 0.72rem;
+  font-size: 0.9rem;
   color: #555;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.6rem;
   text-align: center;
   font-weight: 700;
 }
@@ -231,27 +238,27 @@ header {
   list-style: none;
   width: 100%;
   border: 1.5px solid rgba(0,0,0,0.1);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
 }
 #legend-list li {
   background: var(--lc);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 11px 10px;
+  padding: clamp(10px, 1.1rem, 20px) 0.8rem;
   border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 #legend-list li:last-child { border-bottom: none; }
 .lv-num {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 900;
   color: rgba(0,0,0,0.6);
-  min-width: 16px;
+  min-width: 1.2rem;
 }
 .lv-name {
-  font-size: 0.72rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: rgba(0,0,0,0.7);
   text-align: right;
@@ -265,12 +272,12 @@ header {
 }
 #level-popup.active { pointer-events: all; }
 .popup-inner {
-  background: rgba(255,255,255,0.96);
+  background: rgba(255,255,255,0.97);
   border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  border-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
   overflow: hidden;
-  min-width: 128px;
+  min-width: 9rem;
   backdrop-filter: blur(14px);
   animation: popup-in 0.13s ease-out;
 }
@@ -279,18 +286,18 @@ header {
   to   { opacity:1; transform: scale(1) translateY(0); }
 }
 .popup-name {
-  font-size: 0.78rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #b01033;
-  padding: 8px 14px 6px;
+  padding: 0.6rem 1rem 0.5rem;
   border-bottom: 1px solid rgba(0,0,0,0.08);
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
 }
 #popup-levels li {
   list-style: none;
-  padding: 9px 16px;
+  padding: 0.7rem 1.1rem;
   cursor: pointer;
-  font-size: 0.83rem;
+  font-size: 0.95rem;
   color: #333;
   transition: background 0.1s, color 0.1s;
   border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -304,26 +311,24 @@ header {
 /* ---- Result Panel ---- */
 #result-panel {
   width: 100%;
-  max-width: 820px;
-  margin-top: 24px;
-  padding: 0 20px 40px;
+  max-width: clamp(900px, 84vw, 2000px);
+  margin-top: 1.6rem;
+  padding: 0 2rem 3rem;
 }
 #result-inner {
   background: rgba(255,255,255,0.88);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255,255,255,0.9);
-  border-radius: 16px;
-  padding: 28px 24px;
+  border-radius: 20px;
+  padding: 2rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
   animation: slide-in 0.3s ease-out;
   color: #1a1a2e;
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
 }
-#result-score { color: #c8860a; }
-#result-comment { color: #333; }
 @keyframes slide-in {
   from { opacity:0; transform: translateY(20px); }
   to   { opacity:1; transform: translateY(0); }
@@ -331,22 +336,22 @@ header {
 #result-score-wrap {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 0.4rem;
 }
 #result-score {
-  font-size: 3.2rem;
+  font-size: 4.5rem;
   font-weight: 900;
-  color: var(--accent);
+  color: #c8860a;
   line-height: 1;
 }
 #result-score-label {
-  font-size: 1.2rem;
-  color: rgba(255,255,255,0.5);
+  font-size: 1.6rem;
+  color: #666;
   font-weight: 600;
 }
 #result-comment {
-  font-size: 1.05rem;
-  color: #ddd;
+  font-size: 1.3rem;
+  color: #333;
   font-style: italic;
   text-align: center;
   min-height: 1.4em;
@@ -355,34 +360,34 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  margin-top: 4px;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
 }
 #fav-icon {
-  width: 80px;
-  height: 80px;
+  width: clamp(80px, 7vw, 140px);
+  height: clamp(80px, 7vw, 140px);
   object-fit: cover;
-  border-radius: 12px;
-  border: 2.5px solid #e94560;
-  box-shadow: 0 0 18px rgba(233,69,96,0.4);
+  border-radius: 14px;
+  border: 3px solid #e94560;
+  box-shadow: 0 0 24px rgba(233,69,96,0.4);
 }
 #fav-name {
-  font-size: 0.82rem;
-  color: #e94560;
+  font-size: 1rem;
+  color: #b01033;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.1em;
 }
 #btn-save {
-  margin-top: 6px;
+  margin-top: 0.5rem;
   background: linear-gradient(135deg,#e8976f,#e94560);
   color: #fff;
   border: none;
-  border-radius: 10px;
-  padding: 10px 28px;
-  font-size: 0.93rem;
+  border-radius: 12px;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
   transition: transform 0.14s, opacity 0.14s;
 }
 #btn-save:hover { transform: scale(1.04); opacity: 0.9; }
@@ -397,32 +402,37 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  padding: 20px;
+  gap: 1rem;
+  padding: 1.5rem;
 }
 #output-img {
-  max-width: min(92vw, 520px);
-  border-radius: 14px;
+  max-width: min(92vw, 700px);
+  border-radius: 16px;
   box-shadow: 0 8px 48px rgba(0,0,0,0.7);
 }
 #output-link {
-  color: var(--sub-text);
+  color: #bbb;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 1rem;
   text-decoration: underline;
 }
 
 /* ---- Responsive ---- */
+@media (max-width: 1024px) {
+  #main-layout { max-width: 96vw; padding: 0.5rem 1rem 0; }
+  #result-panel { max-width: 96vw; padding: 0 1rem 2rem; }
+}
 @media (max-width: 640px) {
-  #main-layout { gap: 10px; padding: 8px 10px 0; }
-  #legend-panel { width: 76px; }
-  .lv-name { font-size: 0.62rem; }
+  html { font-size: 14px; }
+  #main-layout { gap: 0.5rem; }
+  #legend-panel { width: 80px; }
+  .lv-name { font-size: 0.65rem; }
   #legend-list li { padding: 8px 7px; }
-  .char-card { height: 120px; }
-  .char-name { font-size: 0.65rem; }
+  .char-card { height: 140px; }
+  .char-name { font-size: 0.75rem; }
 }
 @media (max-width: 420px) {
   #character-grid { gap: 6px; }
-  .char-card { height: 100px; }
-  #legend-panel { width: 68px; }
+  .char-card { height: 110px; }
+  #legend-panel { width: 66px; }
 }
