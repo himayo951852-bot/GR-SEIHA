@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>命运扳机大手子</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1 class="site-title">命运扳机大手子</h1>
+  <p class="site-sub">你是哪种阶位的 Awakener？</p>
+</header>
+
+<main>
+  <section id="character-grid">
+    <!-- 10个角色色块，JS渲染 -->
+  </section>
+
+  <div id="level-popup" style="display:none;">
+    <div class="popup-inner">
+      <div class="popup-name" id="popup-name"></div>
+      <ul id="popup-levels">
+        <li data-level="0">0 &nbsp;没玩过</li>
+        <li data-level="1">1 &nbsp;会玩</li>
+        <li data-level="2">2 &nbsp;熟悉</li>
+        <li data-level="3">3 &nbsp;精通</li>
+        <li data-level="4">4 &nbsp;本命 ♥</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<footer id="footer">
+  <div class="score-line">
+    总分：<span id="score-value">0</span> 分
+  </div>
+  <div class="comment-line" id="comment-line"></div>
+  <div id="fav-icon-wrap" style="display:none;">
+    <img id="fav-icon" src="" alt="本命角色">
+  </div>
+  <button id="btn-save">📸 保存分享图片</button>
+</footer>
+
+<!-- 隐藏的结算图输出区 -->
+<div id="output-wrap" style="display:none;">
+  <img id="output-img" src="">
+  <a id="output-link">关闭</a>
+</div>
+
+<canvas id="share-canvas" style="display:none;"></canvas>
+
+<script src="script.js"></script>
+</body>
+</html>
