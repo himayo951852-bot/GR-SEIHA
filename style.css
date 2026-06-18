@@ -1,12 +1,6 @@
-/* ===== 命运扳机大手子 · style.css v4 ===== */
+/* ===== 命运扳机大手子 · style.css v5 ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/*
-  目标显示器：2560px 宽
-  卡片目标：宽~350px × 高600px（5列，gap16px，图例200px）
-  总内容宽：5×350 + 4×16 + 16 + 200 = 2030px → max-width:2100px
-  字体基准放大到 20px（原16px → 1.25×）
-*/
 html { font-size: 20px; }
 
 :root {
@@ -29,7 +23,6 @@ body {
   align-items: center;
 }
 
-/* 白色磨砂遮罩 */
 body::after {
   content: '';
   position: fixed;
@@ -51,13 +44,13 @@ header, main, #result-panel, #output-wrap { position: relative; z-index: 1; }
 /* ---- Header ---- */
 header {
   text-align: center;
-  padding: 52vh 40px 20px;
+  padding: 5vh 40px 20px;
   width: 100%;
 }
 .site-title {
-  font-size: 3.2rem;        /* 64px */
+  font-size: 72px;
   font-weight: 900;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.12em;
   background: linear-gradient(135deg,#c8860a,#d44a1a,#b01033);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -66,8 +59,8 @@ header {
 }
 .site-sub {
   color: #444;
-  margin-top: 0.5rem;
-  font-size: 1.2rem;        /* 24px */
+  margin-top: 10px;
+  font-size: 30px;
   text-shadow: 0 1px 4px rgba(255,255,255,0.9);
 }
 
@@ -75,32 +68,29 @@ header {
 #main-layout {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
-  padding: 16px 40px 0;
+  gap: 24px;
+  padding: 20px 40px 0;
   width: 100%;
-  max-width: 2100px;
-  min-width: 320px;
+  max-width: 2560px;
 }
 
-/* ---- Left col ---- */
 #left-col { flex: 1; min-width: 0; }
 
 /* ---- Character Grid ---- */
 #character-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  gap: 18px;
   width: 100%;
 }
 
-/* 单卡：宽度由 grid 5等分自动，高度用 aspect-ratio 保持矩形比例 */
 .char-card {
   border-radius: var(--card-radius);
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  aspect-ratio: 3 / 4;   /* 宽:高 = 3:4，正常卡片矩形 */
-  height: auto;
+  /* 宽度由grid均分，高度600px */
+  height: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,7 +118,6 @@ header {
   50%      { box-shadow: 0 0 0 12px rgba(233,69,96,0.1); }
 }
 
-/* 角色头像铺满 */
 .char-avatar {
   position: absolute;
   inset: 0;
@@ -138,40 +127,37 @@ header {
   border-radius: var(--card-radius);
 }
 
-/* 颜色叠层 */
 .char-overlay {
   position: absolute;
   inset: 0;
   border-radius: var(--card-radius);
-  opacity: 0.48;
+  opacity: 0.45;
   transition: opacity 0.2s;
 }
-.char-card:hover .char-overlay { opacity: 0.28; }
-.char-card.selected .char-overlay { opacity: 0.25; }
+.char-card:hover .char-overlay { opacity: 0.25; }
+.char-card.selected .char-overlay { opacity: 0.22; }
 
-/* 底部文字区 */
 .char-info {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   z-index: 2;
-  padding: 8px 8px 12px;
-  background: linear-gradient(transparent, rgba(0,0,0,0.80) 55%);
+  padding: 10px 8px 16px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.82) 55%);
   border-radius: 0 0 var(--card-radius) var(--card-radius);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 .char-name {
-  font-size: 1.1rem;        /* 22px */
+  font-size: 29px;
   font-weight: 700;
   color: #fff;
   text-shadow: 0 1px 4px rgba(0,0,0,0.9);
   text-align: center;
-  letter-spacing: 0.5px;
 }
 .char-level-badge {
-  font-size: 0.85rem;       /* 17px */
+  font-size: 22px;
   font-weight: 600;
   color: var(--accent);
   min-height: 1em;
@@ -182,8 +168,8 @@ header {
 /* ---- 按钮行 ---- */
 #btn-row {
   display: flex;
-  gap: 16px;
-  margin-top: 24px;
+  gap: 20px;
+  margin-top: 28px;
   justify-content: center;
 }
 #btn-confirm {
@@ -191,8 +177,8 @@ header {
   color: #fff;
   border: none;
   border-radius: 14px;
-  padding: 16px 64px;
-  font-size: 1.3rem;        /* 26px */
+  padding: 18px 72px;
+  font-size: 36px;
   font-weight: 800;
   cursor: pointer;
   letter-spacing: 0.15em;
@@ -205,8 +191,8 @@ header {
   color: #555;
   border: 1.5px solid rgba(0,0,0,0.15);
   border-radius: 14px;
-  padding: 16px 40px;
-  font-size: 1.1rem;        /* 22px */
+  padding: 18px 44px;
+  font-size: 36px;
   cursor: pointer;
   transition: background 0.14s;
 }
@@ -222,10 +208,10 @@ header {
   padding-top: 6px;
 }
 .legend-title {
-  font-size: 1rem;          /* 20px */
+  font-size: 24px;
   color: #555;
   letter-spacing: 0.1em;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   font-weight: 700;
 }
 #legend-list {
@@ -241,17 +227,17 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 16px;
+  padding: 16px 14px;
   border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 #legend-list li:last-child { border-bottom: none; }
 .lv-num {
-  font-size: 1.3rem;        /* 26px */
+  font-size: 30px;
   font-weight: 900;
   color: rgba(0,0,0,0.6);
 }
 .lv-name {
-  font-size: 1rem;          /* 20px */
+  font-size: 30px;
   font-weight: 700;
   color: rgba(0,0,0,0.7);
   text-align: right;
@@ -270,7 +256,7 @@ header {
   border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.2);
   overflow: hidden;
-  min-width: 160px;
+  min-width: 180px;
   backdrop-filter: blur(14px);
   animation: popup-in 0.13s ease-out;
 }
@@ -279,18 +265,18 @@ header {
   to   { opacity:1; transform: scale(1) translateY(0); }
 }
 .popup-name {
-  font-size: 1rem;
+  font-size: 22px;
   font-weight: 700;
   color: #b01033;
-  padding: 12px 18px 10px;
+  padding: 14px 20px 12px;
   border-bottom: 1px solid rgba(0,0,0,0.08);
   letter-spacing: 0.08em;
 }
 #popup-levels li {
   list-style: none;
-  padding: 12px 20px;
+  padding: 14px 24px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 22px;
   color: #333;
   transition: background 0.1s, color 0.1s;
   border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -304,8 +290,8 @@ header {
 /* ---- Result Panel ---- */
 #result-panel {
   width: 100%;
-  max-width: 2100px;
-  margin-top: 32px;
+  max-width: 2560px;
+  margin-top: 36px;
   padding: 0 40px 60px;
 }
 #result-inner {
@@ -313,11 +299,11 @@ header {
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255,255,255,0.9);
   border-radius: 24px;
-  padding: 40px 40px;
+  padding: 48px 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   animation: slide-in 0.3s ease-out;
   color: #1a1a2e;
   box-shadow: 0 6px 32px rgba(0,0,0,0.15);
@@ -329,21 +315,21 @@ header {
 #result-score-wrap {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 10px;
 }
 #result-score {
-  font-size: 5.5rem;        /* 110px */
+  font-size: 120px;
   font-weight: 900;
   color: #c8860a;
   line-height: 1;
 }
 #result-score-label {
-  font-size: 2rem;
+  font-size: 48px;
   color: #666;
   font-weight: 600;
 }
 #result-comment {
-  font-size: 1.5rem;
+  font-size: 36px;
   color: #333;
   font-style: italic;
   text-align: center;
@@ -352,19 +338,19 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-top: 8px;
 }
 #fav-icon {
-  width: 140px;
-  height: 140px;
+  width: 160px;
+  height: 160px;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 18px;
   border: 3px solid #e94560;
   box-shadow: 0 0 28px rgba(233,69,96,0.4);
 }
 #fav-name {
-  font-size: 1.1rem;
+  font-size: 28px;
   color: #b01033;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -375,8 +361,8 @@ header {
   color: #fff;
   border: none;
   border-radius: 14px;
-  padding: 14px 40px;
-  font-size: 1.2rem;
+  padding: 16px 48px;
+  font-size: 28px;
   font-weight: 700;
   cursor: pointer;
   letter-spacing: 0.08em;
@@ -398,32 +384,43 @@ header {
   padding: 24px;
 }
 #output-img {
-  max-width: min(92vw, 800px);
+  max-width: min(92vw, 900px);
   border-radius: 18px;
   box-shadow: 0 8px 56px rgba(0,0,0,0.7);
 }
 #output-link {
   color: #bbb;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 22px;
   text-decoration: underline;
 }
 
-/* ---- Responsive (小屏缩回去) ---- */
-@media (max-width: 1400px) {
-  #main-layout { max-width: 1400px; }
-  #result-panel { max-width: 1400px; }
+/* ---- Responsive ---- */
+@media (max-width: 1600px) {
+  .char-card { height: 400px; }
+  .site-title { font-size: 48px; }
+  .site-sub { font-size: 20px; }
+  #btn-confirm, #btn-reset { font-size: 24px; }
+  .char-name { font-size: 20px; }
+  .char-level-badge { font-size: 16px; }
+  .lv-num, .lv-name { font-size: 20px; }
+  #legend-panel { width: 140px; }
 }
-@media (max-width: 900px) {
-  html { font-size: 16px; }
-  #main-layout { max-width: 98vw; padding: 8px 12px 0; gap: 10px; }
+@media (max-width: 1000px) {
+  .char-card { height: 240px; }
+  .site-title { font-size: 32px; }
+  .site-sub { font-size: 15px; }
+  #btn-confirm, #btn-reset { font-size: 18px; padding: 12px 28px; }
+  #main-layout { padding: 12px 16px 0; gap: 12px; }
   #legend-panel { width: 100px; }
-  .lv-num { font-size: 1rem; }
-  .lv-name { font-size: 0.7rem; }
+  .lv-num, .lv-name { font-size: 14px; }
   #legend-list li { padding: 10px 8px; }
 }
 @media (max-width: 600px) {
-  html { font-size: 14px; }
-  #legend-panel { width: 80px; }
-  .lv-name { font-size: 0.62rem; }
+  .char-card { height: 150px; }
+  .site-title { font-size: 22px; }
+  #legend-panel { width: 76px; }
+  .lv-name { font-size: 11px; }
+  .lv-num { font-size: 13px; }
+  .char-name { font-size: 12px; }
 }
