@@ -13,14 +13,13 @@
 }
 
 body {
-  background-color: var(--bg);
+  background-color: #e8e4de;
   background-image:
-    linear-gradient(to bottom, rgba(10,10,22,0.62) 0%, rgba(10,10,22,0.78) 100%),
     url('bg.png');
   background-size: cover;
   background-position: center top;
   background-attachment: fixed;
-  color: var(--text);
+  color: #1a1a2e;
   font-family: var(--font);
   min-height: 100vh;
   display: flex;
@@ -28,24 +27,48 @@ body {
   align-items: center;
 }
 
+/* 全局白色磨砂遮罩：只覆盖下半部分，让背景图上方可见 */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0)    0%,
+    rgba(255,255,255,0)    28%,
+    rgba(255,255,255,0.55) 48%,
+    rgba(255,255,255,0.82) 65%,
+    rgba(255,255,255,0.92) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 内容层要在遮罩之上 */
+header, main, #result-panel, #output-wrap { position: relative; z-index: 1; }
+
 /* ---- Header ---- */
 header {
   text-align: center;
-  padding: 32px 20px 16px;
+  padding: 52vh 20px 16px;
 }
 .site-title {
   font-size: 1.9rem;
   font-weight: 900;
   letter-spacing: 3px;
-  background: linear-gradient(135deg,#f9d71c,#e8976f,#e94560);
+  background: linear-gradient(135deg,#c8860a,#d44a1a,#b01033);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: none;
+  /* 白底下加描边增强可读性 */
+  filter: drop-shadow(0 1px 2px rgba(255,255,255,0.6));
 }
 .site-sub {
-  color: var(--sub-text);
+  color: #444;
   margin-top: 6px;
   font-size: 0.85rem;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.8);
 }
 
 /* ---- Main layout ---- */
@@ -81,9 +104,10 @@ header {
   justify-content: center;
   transition: transform 0.15s, box-shadow 0.15s;
   user-select: none;
-  border: 2.5px solid rgba(255,255,255,0.1);
-  background: rgba(20,20,40,0.55);
-  backdrop-filter: blur(4px);
+  border: 2px solid rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.22);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
 }
 .char-card:hover {
   transform: translateY(-3px) scale(1.04);
@@ -174,16 +198,16 @@ header {
 }
 #btn-confirm:hover { transform: scale(1.04); opacity: 0.9; }
 #btn-reset {
-  background: rgba(255,255,255,0.07);
-  color: var(--sub-text);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.07);
+  color: #555;
+  border: 1px solid rgba(0,0,0,0.15);
   border-radius: 10px;
   padding: 11px 24px;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.14s;
 }
-#btn-reset:hover { background: rgba(255,255,255,0.12); color: #ddd; }
+#btn-reset:hover { background: rgba(0,0,0,0.12); color: #222; }
 
 /* ---- 右侧得分表 ---- */
 #legend-panel {
@@ -197,17 +221,19 @@ header {
 }
 .legend-title {
   font-size: 0.72rem;
-  color: var(--sub-text);
+  color: #555;
   letter-spacing: 1px;
   margin-bottom: 8px;
   text-align: center;
+  font-weight: 700;
 }
 #legend-list {
   list-style: none;
   width: 100%;
-  border: 1.5px solid rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(0,0,0,0.1);
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 #legend-list li {
   background: var(--lc);
@@ -215,19 +241,19 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 11px 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.18);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 #legend-list li:last-child { border-bottom: none; }
 .lv-num {
   font-size: 1rem;
   font-weight: 900;
-  color: rgba(0,0,0,0.65);
+  color: rgba(0,0,0,0.6);
   min-width: 16px;
 }
 .lv-name {
   font-size: 0.72rem;
   font-weight: 700;
-  color: rgba(0,0,0,0.72);
+  color: rgba(0,0,0,0.7);
   text-align: right;
 }
 
@@ -239,10 +265,10 @@ header {
 }
 #level-popup.active { pointer-events: all; }
 .popup-inner {
-  background: #1a1a2e;
-  border: 1px solid rgba(255,255,255,0.13);
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(0,0,0,0.1);
   border-radius: 12px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   overflow: hidden;
   min-width: 128px;
   backdrop-filter: blur(14px);
@@ -255,9 +281,9 @@ header {
 .popup-name {
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--accent);
+  color: #b01033;
   padding: 8px 14px 6px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
   letter-spacing: 1px;
 }
 #popup-levels li {
@@ -265,15 +291,15 @@ header {
   padding: 9px 16px;
   cursor: pointer;
   font-size: 0.83rem;
-  color: #ccc;
+  color: #333;
   transition: background 0.1s, color 0.1s;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 #popup-levels li:last-child { border-bottom: none; }
-#popup-levels li:hover { background: rgba(255,255,255,0.09); color: #fff; }
-#popup-levels li[data-level="4"] { color: #e94560; }
-#popup-levels li[data-level="4"]:hover { background: rgba(233,69,96,0.12); }
-#popup-levels li.active-level { color: var(--accent); font-weight: 700; }
+#popup-levels li:hover { background: rgba(0,0,0,0.05); color: #111; }
+#popup-levels li[data-level="4"] { color: #b01033; font-weight: 700; }
+#popup-levels li[data-level="4"]:hover { background: rgba(176,16,51,0.07); }
+#popup-levels li.active-level { color: #c8860a; font-weight: 700; }
 
 /* ---- Result Panel ---- */
 #result-panel {
@@ -283,9 +309,9 @@ header {
   padding: 0 20px 40px;
 }
 #result-inner {
-  background: rgba(20,20,42,0.82);
+  background: rgba(255,255,255,0.88);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.9);
   border-radius: 16px;
   padding: 28px 24px;
   display: flex;
@@ -293,7 +319,11 @@ header {
   align-items: center;
   gap: 12px;
   animation: slide-in 0.3s ease-out;
+  color: #1a1a2e;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
 }
+#result-score { color: #c8860a; }
+#result-comment { color: #333; }
 @keyframes slide-in {
   from { opacity:0; transform: translateY(20px); }
   to   { opacity:1; transform: translateY(0); }
