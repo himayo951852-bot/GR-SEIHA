@@ -10,47 +10,73 @@
 
 <header>
   <h1 class="site-title">命运扳机大手子</h1>
-  <p class="site-sub">你是哪种阶位的 Awakener？</p>
+  <p class="site-sub">选出你对每位 Awakener 的熟悉程度，测算你的阶位</p>
 </header>
 
 <main>
-  <section id="character-grid">
-    <!-- 10个角色色块，JS渲染 -->
-  </section>
+  <div id="main-layout">
 
+    <!-- 左：角色格子 -->
+    <div id="left-col">
+      <section id="character-grid"></section>
+      <div id="btn-row">
+        <button id="btn-confirm">确 认</button>
+        <button id="btn-reset">重置</button>
+      </div>
+    </div>
+
+    <!-- 右：得分表图例 -->
+    <aside id="legend-panel">
+      <div class="legend-title">熟练度</div>
+      <ul id="legend-list">
+        <li style="--lc:#e94560"><span class="lv-num">4</span><span class="lv-name">本命 ♥</span></li>
+        <li style="--lc:#e67e22"><span class="lv-num">3</span><span class="lv-name">精通</span></li>
+        <li style="--lc:#f9d71c"><span class="lv-num">2</span><span class="lv-name">熟悉</span></li>
+        <li style="--lc:#4caf84"><span class="lv-num">1</span><span class="lv-name">会玩</span></li>
+        <li style="--lc:#7ec8f0"><span class="lv-num">0</span><span class="lv-name">没玩过</span></li>
+      </ul>
+    </aside>
+
+  </div>
+
+  <!-- 弹窗 -->
   <div id="level-popup" style="display:none;">
     <div class="popup-inner">
       <div class="popup-name" id="popup-name"></div>
       <ul id="popup-levels">
-        <li data-level="0">0 &nbsp;没玩过</li>
-        <li data-level="1">1 &nbsp;会玩</li>
-        <li data-level="2">2 &nbsp;熟悉</li>
-        <li data-level="3">3 &nbsp;精通</li>
-        <li data-level="4">4 &nbsp;本命 ♥</li>
+        <li data-level="0">没玩过</li>
+        <li data-level="1">1  会玩</li>
+        <li data-level="2">2  熟悉</li>
+        <li data-level="3">3  精通</li>
+        <li data-level="4">4  本命 ♥</li>
       </ul>
     </div>
   </div>
 </main>
 
-<footer id="footer">
-  <div class="score-line">
-    总分：<span id="score-value">0</span> 分
+<!-- 结算区：点确认后显示 -->
+<section id="result-panel" style="display:none;">
+  <div id="result-inner">
+    <div id="result-score-wrap">
+      <span id="result-score">0</span>
+      <span id="result-score-label">分</span>
+    </div>
+    <div id="result-comment"></div>
+    <div id="fav-icon-wrap" style="display:none;">
+      <img id="fav-icon" src="" alt="本命">
+      <div id="fav-name"></div>
+    </div>
+    <button id="btn-save">📸 保存分享图片</button>
   </div>
-  <div class="comment-line" id="comment-line"></div>
-  <div id="fav-icon-wrap" style="display:none;">
-    <img id="fav-icon" src="" alt="本命角色">
-  </div>
-  <button id="btn-save">📸 保存分享图片</button>
-</footer>
+</section>
 
-<!-- 隐藏的结算图输出区 -->
+<!-- 分享图预览层 -->
 <div id="output-wrap" style="display:none;">
   <img id="output-img" src="">
-  <a id="output-link">关闭</a>
+  <a id="output-link">关闭预览</a>
 </div>
 
 <canvas id="share-canvas" style="display:none;"></canvas>
-
 <script src="script.js"></script>
 </body>
 </html>
