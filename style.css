@@ -1,20 +1,17 @@
-/* ===== 命运扳机大手子 · style.css v3 ===== */
+/* ===== 命运扳机大手子 · style.css v4 ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /*
-  缩放基准：目标在 2560px 宽屏下显示约 2000px 宽的内容区
-  用 clamp 做流体字体，小屏不破坏，大屏自动放大
-  1rem-base = clamp(16px, 1.04vw, 22px)
+  目标显示器：2560px 宽
+  卡片目标：宽~350px × 高600px（5列，gap16px，图例200px）
+  总内容宽：5×350 + 4×16 + 16 + 200 = 2030px → max-width:2100px
+  字体基准放大到 20px（原16px → 1.25×）
 */
-html { font-size: clamp(16px, 1.04vw, 22px); }
+html { font-size: 20px; }
 
 :root {
-  --bg: #0f0f18;
   --card-radius: 14px;
   --accent: #f9d71c;
-  --text: #ececec;
-  --sub-text: #999;
-  --shadow: 0 8px 32px rgba(0,0,0,0.6);
   --font: 'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;
 }
 
@@ -32,7 +29,7 @@ body {
   align-items: center;
 }
 
-/* 白色磨砂遮罩：上方露出背景插画，下方白化 */
+/* 白色磨砂遮罩 */
 body::after {
   content: '';
   position: fixed;
@@ -49,42 +46,40 @@ body::after {
   z-index: 0;
 }
 
-/* 内容层在遮罩之上 */
 header, main, #result-panel, #output-wrap { position: relative; z-index: 1; }
 
 /* ---- Header ---- */
 header {
   text-align: center;
-  /* 52vh 留出上方背景图展示区 */
-  padding: 52vh 1.25rem 1rem;
+  padding: 52vh 40px 20px;
   width: 100%;
 }
 .site-title {
-  font-size: 2.8rem;
+  font-size: 3.2rem;        /* 64px */
   font-weight: 900;
   letter-spacing: 0.18em;
   background: linear-gradient(135deg,#c8860a,#d44a1a,#b01033);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 1px 2px rgba(255,255,255,0.6));
+  filter: drop-shadow(0 1px 3px rgba(255,255,255,0.7));
 }
 .site-sub {
   color: #444;
-  margin-top: 0.45rem;
-  font-size: 1.1rem;
-  text-shadow: 0 1px 3px rgba(255,255,255,0.8);
+  margin-top: 0.5rem;
+  font-size: 1.2rem;        /* 24px */
+  text-shadow: 0 1px 4px rgba(255,255,255,0.9);
 }
 
 /* ---- Main layout ---- */
 #main-layout {
   display: flex;
   align-items: flex-start;
-  gap: 1.2rem;
-  padding: 0.75rem 2rem 0;
+  gap: 20px;
+  padding: 16px 40px 0;
   width: 100%;
-  /* 5列×350px + 4gap×16px + 图例200px ≈ 1964px，用 clamp 自适应 */
-  max-width: clamp(900px, 84vw, 2000px);
+  max-width: 2100px;
+  min-width: 320px;
 }
 
 /* ---- Left col ---- */
@@ -94,18 +89,17 @@ header {
 #character-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: clamp(8px, 0.7rem, 18px);
+  gap: 16px;
   width: 100%;
 }
 
-/* 单卡目标：宽度由 grid 均分，高度约 600px（在2560宽时） */
+/* 单卡：宽度由 grid 5等分自动，高度固定 600px */
 .char-card {
   border-radius: var(--card-radius);
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  /* clamp: 最小240px, 流体, 最大600px */
-  height: clamp(240px, 28vw, 600px);
+  height: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -115,29 +109,29 @@ header {
   border: 2px solid rgba(255,255,255,0.55);
   background: rgba(255,255,255,0.22);
   backdrop-filter: blur(6px);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.14);
 }
 .char-card:hover {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 10px 32px rgba(0,0,0,0.28);
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.28);
 }
-.char-card.selected { border-color: rgba(255,255,255,0.6); }
+.char-card.selected { border-color: rgba(255,255,255,0.65); }
 .char-card.fav {
   border-color: #e94560;
-  box-shadow: 0 0 0 4px rgba(233,69,96,0.4);
+  border-width: 3px;
+  box-shadow: 0 0 0 5px rgba(233,69,96,0.35);
   animation: fav-pulse 1.4s ease-in-out infinite;
 }
 @keyframes fav-pulse {
-  0%,100% { box-shadow: 0 0 0 4px rgba(233,69,96,0.4); }
-  50%      { box-shadow: 0 0 0 10px rgba(233,69,96,0.1); }
+  0%,100% { box-shadow: 0 0 0 5px rgba(233,69,96,0.35); }
+  50%      { box-shadow: 0 0 0 12px rgba(233,69,96,0.1); }
 }
 
-/* 角色头像铺满卡片 */
+/* 角色头像铺满 */
 .char-avatar {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
   object-position: top center;
   border-radius: var(--card-radius);
@@ -148,27 +142,27 @@ header {
   position: absolute;
   inset: 0;
   border-radius: var(--card-radius);
-  opacity: 0.5;
+  opacity: 0.48;
   transition: opacity 0.2s;
 }
-.char-card:hover .char-overlay { opacity: 0.3; }
-.char-card.selected .char-overlay { opacity: 0.28; }
+.char-card:hover .char-overlay { opacity: 0.28; }
+.char-card.selected .char-overlay { opacity: 0.25; }
 
 /* 底部文字区 */
 .char-info {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   z-index: 2;
-  padding: 0.4rem 0.4rem 0.55rem;
-  background: linear-gradient(transparent, rgba(0,0,0,0.78) 55%);
+  padding: 8px 8px 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.80) 55%);
   border-radius: 0 0 var(--card-radius) var(--card-radius);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 }
 .char-name {
-  font-size: 1rem;
+  font-size: 1.1rem;        /* 22px */
   font-weight: 700;
   color: #fff;
   text-shadow: 0 1px 4px rgba(0,0,0,0.9);
@@ -176,7 +170,7 @@ header {
   letter-spacing: 0.5px;
 }
 .char-level-badge {
-  font-size: 0.8rem;
+  font-size: 0.85rem;       /* 17px */
   font-weight: 600;
   color: var(--accent);
   min-height: 1em;
@@ -187,31 +181,31 @@ header {
 /* ---- 按钮行 ---- */
 #btn-row {
   display: flex;
-  gap: 1rem;
-  margin-top: 1.2rem;
+  gap: 16px;
+  margin-top: 24px;
   justify-content: center;
 }
 #btn-confirm {
   background: linear-gradient(135deg,#e8976f,#e94560);
   color: #fff;
   border: none;
-  border-radius: 12px;
-  padding: 0.85rem 3rem;
-  font-size: 1.25rem;
+  border-radius: 14px;
+  padding: 16px 64px;
+  font-size: 1.3rem;        /* 26px */
   font-weight: 800;
   cursor: pointer;
   letter-spacing: 0.15em;
   transition: transform 0.14s, opacity 0.14s;
-  box-shadow: 0 4px 16px rgba(233,69,96,0.35);
+  box-shadow: 0 4px 20px rgba(233,69,96,0.35);
 }
 #btn-confirm:hover { transform: scale(1.04); opacity: 0.9; }
 #btn-reset {
   background: rgba(0,0,0,0.07);
   color: #555;
   border: 1.5px solid rgba(0,0,0,0.15);
-  border-radius: 12px;
-  padding: 0.85rem 1.8rem;
-  font-size: 1.1rem;
+  border-radius: 14px;
+  padding: 16px 40px;
+  font-size: 1.1rem;        /* 22px */
   cursor: pointer;
   transition: background 0.14s;
 }
@@ -220,45 +214,43 @@ header {
 /* ---- 右侧得分表 ---- */
 #legend-panel {
   flex-shrink: 0;
-  width: clamp(110px, 9vw, 200px);
+  width: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 0.25rem;
+  padding-top: 6px;
 }
 .legend-title {
-  font-size: 0.9rem;
+  font-size: 1rem;          /* 20px */
   color: #555;
   letter-spacing: 0.1em;
-  margin-bottom: 0.6rem;
-  text-align: center;
+  margin-bottom: 12px;
   font-weight: 700;
 }
 #legend-list {
   list-style: none;
   width: 100%;
   border: 1.5px solid rgba(0,0,0,0.1);
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.13);
 }
 #legend-list li {
   background: var(--lc);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(10px, 1.1rem, 20px) 0.8rem;
+  padding: 18px 16px;
   border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 #legend-list li:last-child { border-bottom: none; }
 .lv-num {
-  font-size: 1.2rem;
+  font-size: 1.3rem;        /* 26px */
   font-weight: 900;
   color: rgba(0,0,0,0.6);
-  min-width: 1.2rem;
 }
 .lv-name {
-  font-size: 0.88rem;
+  font-size: 1rem;          /* 20px */
   font-weight: 700;
   color: rgba(0,0,0,0.7);
   text-align: right;
@@ -274,10 +266,10 @@ header {
 .popup-inner {
   background: rgba(255,255,255,0.97);
   border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.2);
   overflow: hidden;
-  min-width: 9rem;
+  min-width: 160px;
   backdrop-filter: blur(14px);
   animation: popup-in 0.13s ease-out;
 }
@@ -286,18 +278,18 @@ header {
   to   { opacity:1; transform: scale(1) translateY(0); }
 }
 .popup-name {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #b01033;
-  padding: 0.6rem 1rem 0.5rem;
+  padding: 12px 18px 10px;
   border-bottom: 1px solid rgba(0,0,0,0.08);
   letter-spacing: 0.08em;
 }
 #popup-levels li {
   list-style: none;
-  padding: 0.7rem 1.1rem;
+  padding: 12px 20px;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #333;
   transition: background 0.1s, color 0.1s;
   border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -311,80 +303,79 @@ header {
 /* ---- Result Panel ---- */
 #result-panel {
   width: 100%;
-  max-width: clamp(900px, 84vw, 2000px);
-  margin-top: 1.6rem;
-  padding: 0 2rem 3rem;
+  max-width: 2100px;
+  margin-top: 32px;
+  padding: 0 40px 60px;
 }
 #result-inner {
   background: rgba(255,255,255,0.88);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255,255,255,0.9);
-  border-radius: 20px;
-  padding: 2rem 2rem;
+  border-radius: 24px;
+  padding: 40px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 16px;
   animation: slide-in 0.3s ease-out;
   color: #1a1a2e;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 32px rgba(0,0,0,0.15);
 }
 @keyframes slide-in {
-  from { opacity:0; transform: translateY(20px); }
+  from { opacity:0; transform: translateY(24px); }
   to   { opacity:1; transform: translateY(0); }
 }
 #result-score-wrap {
   display: flex;
   align-items: baseline;
-  gap: 0.4rem;
+  gap: 8px;
 }
 #result-score {
-  font-size: 4.5rem;
+  font-size: 5.5rem;        /* 110px */
   font-weight: 900;
   color: #c8860a;
   line-height: 1;
 }
 #result-score-label {
-  font-size: 1.6rem;
+  font-size: 2rem;
   color: #666;
   font-weight: 600;
 }
 #result-comment {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   color: #333;
   font-style: italic;
   text-align: center;
-  min-height: 1.4em;
 }
 #fav-icon-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
+  gap: 8px;
+  margin-top: 8px;
 }
 #fav-icon {
-  width: clamp(80px, 7vw, 140px);
-  height: clamp(80px, 7vw, 140px);
+  width: 140px;
+  height: 140px;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 16px;
   border: 3px solid #e94560;
-  box-shadow: 0 0 24px rgba(233,69,96,0.4);
+  box-shadow: 0 0 28px rgba(233,69,96,0.4);
 }
 #fav-name {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #b01033;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
 #btn-save {
-  margin-top: 0.5rem;
+  margin-top: 8px;
   background: linear-gradient(135deg,#e8976f,#e94560);
   color: #fff;
   border: none;
-  border-radius: 12px;
-  padding: 0.75rem 2rem;
-  font-size: 1.1rem;
+  border-radius: 14px;
+  padding: 14px 40px;
+  font-size: 1.2rem;
   font-weight: 700;
   cursor: pointer;
   letter-spacing: 0.08em;
@@ -402,13 +393,13 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 1.5rem;
+  gap: 16px;
+  padding: 24px;
 }
 #output-img {
-  max-width: min(92vw, 700px);
-  border-radius: 16px;
-  box-shadow: 0 8px 48px rgba(0,0,0,0.7);
+  max-width: min(92vw, 800px);
+  border-radius: 18px;
+  box-shadow: 0 8px 56px rgba(0,0,0,0.7);
 }
 #output-link {
   color: #bbb;
@@ -417,22 +408,24 @@ header {
   text-decoration: underline;
 }
 
-/* ---- Responsive ---- */
-@media (max-width: 1024px) {
-  #main-layout { max-width: 96vw; padding: 0.5rem 1rem 0; }
-  #result-panel { max-width: 96vw; padding: 0 1rem 2rem; }
+/* ---- Responsive (小屏缩回去) ---- */
+@media (max-width: 1400px) {
+  .char-card { height: 400px; }
+  #main-layout { max-width: 1400px; }
+  #result-panel { max-width: 1400px; }
 }
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+  html { font-size: 16px; }
+  .char-card { height: 200px; }
+  #main-layout { max-width: 98vw; padding: 8px 12px 0; gap: 10px; }
+  #legend-panel { width: 100px; }
+  .lv-num { font-size: 1rem; }
+  .lv-name { font-size: 0.7rem; }
+  #legend-list li { padding: 10px 8px; }
+}
+@media (max-width: 600px) {
   html { font-size: 14px; }
-  #main-layout { gap: 0.5rem; }
-  #legend-panel { width: 80px; }
-  .lv-name { font-size: 0.65rem; }
-  #legend-list li { padding: 8px 7px; }
   .char-card { height: 140px; }
-  .char-name { font-size: 0.75rem; }
-}
-@media (max-width: 420px) {
-  #character-grid { gap: 6px; }
-  .char-card { height: 110px; }
-  #legend-panel { width: 66px; }
+  #legend-panel { width: 80px; }
+  .lv-name { font-size: 0.62rem; }
 }
