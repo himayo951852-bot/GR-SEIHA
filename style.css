@@ -93,13 +93,14 @@ header {
   width: 100%;
 }
 
-/* 单卡：宽度由 grid 5等分自动，高度固定 600px */
+/* 单卡：宽度由 grid 5等分自动，高度用 aspect-ratio 保持矩形比例 */
 .char-card {
   border-radius: var(--card-radius);
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  height: 600px;
+  aspect-ratio: 3 / 4;   /* 宽:高 = 3:4，正常卡片矩形 */
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -410,13 +411,11 @@ header {
 
 /* ---- Responsive (小屏缩回去) ---- */
 @media (max-width: 1400px) {
-  .char-card { height: 400px; }
   #main-layout { max-width: 1400px; }
   #result-panel { max-width: 1400px; }
 }
 @media (max-width: 900px) {
   html { font-size: 16px; }
-  .char-card { height: 200px; }
   #main-layout { max-width: 98vw; padding: 8px 12px 0; gap: 10px; }
   #legend-panel { width: 100px; }
   .lv-num { font-size: 1rem; }
@@ -425,7 +424,6 @@ header {
 }
 @media (max-width: 600px) {
   html { font-size: 14px; }
-  .char-card { height: 140px; }
   #legend-panel { width: 80px; }
   .lv-name { font-size: 0.62rem; }
 }

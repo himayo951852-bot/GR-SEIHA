@@ -2,7 +2,8 @@
 <html lang="zh-Hans">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- 不限制宽度，让大屏真实展示 -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
   <title>命运扳机大手子</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -15,7 +16,6 @@
 
 <main>
   <div id="main-layout">
-
     <!-- 左：角色格子 -->
     <div id="left-col">
       <section id="character-grid"></section>
@@ -36,7 +36,6 @@
         <li style="--lc:#c8cdd6"><span class="lv-num">0</span><span class="lv-name">没玩过</span></li>
       </ul>
     </aside>
-
   </div>
 
   <!-- 弹窗 -->
@@ -54,7 +53,7 @@
   </div>
 </main>
 
-<!-- 结算区：点确认后显示 -->
+<!-- 结算区 -->
 <section id="result-panel" style="display:none;">
   <div id="result-inner">
     <div id="result-score-wrap">
@@ -78,5 +77,217 @@
 
 <canvas id="share-canvas" style="display:none;"></canvas>
 <script src="script.js"></script>
+
+<!-- ========== 调试面板 ========== -->
+<div id="debug-panel">
+  <div id="debug-header">
+    🔧 尺寸调试  <button id="debug-toggle">收起</button>
+  </div>
+  <div id="debug-body">
+    <label>内容区最大宽 <span id="val-maxw">1800</span>px
+      <input type="range" min="800" max="3000" step="20" value="1800" data-var="--db-maxw" data-target="main-layout,result-panel">
+    </label>
+    <label>卡片宽(每列) <span id="val-cardw">—</span>px（由列数均分）</label>
+    <label>卡片高 <span id="val-cardh">350</span>px
+      <input type="range" min="100" max="800" step="10" value="350" data-prop="card-height">
+    </label>
+    <label>格子间距 <span id="val-gap">12</span>px
+      <input type="range" min="4" max="40" step="2" value="12" data-prop="grid-gap">
+    </label>
+    <label>图例宽 <span id="val-legendw">160</span>px
+      <input type="range" min="80" max="280" step="4" value="160" data-prop="legend-width">
+    </label>
+    <label>标题字号 <span id="val-title">42</span>px
+      <input type="range" min="16" max="100" step="2" value="42" data-prop="title-size">
+    </label>
+    <label>副标题字号 <span id="val-sub">18</span>px
+      <input type="range" min="10" max="48" step="1" value="18" data-prop="sub-size">
+    </label>
+    <label>按钮字号 <span id="val-btn">20</span>px
+      <input type="range" min="10" max="48" step="1" value="20" data-prop="btn-size">
+    </label>
+    <label>图例字号 <span id="val-legend-font">16</span>px
+      <input type="range" min="10" max="36" step="1" value="16" data-prop="legend-font">
+    </label>
+    <label>角色名字号 <span id="val-charname">15</span>px
+      <input type="range" min="8" max="32" step="1" value="15" data-prop="charname-size">
+    </label>
+    <label>header顶部留白 <span id="val-pad">48</span>vh
+      <input type="range" min="0" max="70" step="1" value="48" data-prop="header-pad">
+    </label>
+    <div id="debug-actions">
+      <button id="debug-export">📋 复制当前参数</button>
+    </div>
+  </div>
+</div>
+
+<style>
+#debug-panel {
+  position: fixed;
+  bottom: 16px; right: 16px;
+  z-index: 9000;
+  background: rgba(20,20,30,0.95);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  color: #eee;
+  font-family: monospace;
+  font-size: 13px;
+  width: 300px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+}
+#debug-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+#debug-toggle {
+  background: rgba(255,255,255,0.1);
+  border: none; border-radius: 6px;
+  color: #ccc; padding: 3px 10px;
+  cursor: pointer; font-size: 12px;
+}
+#debug-body { padding: 10px 14px 12px; }
+#debug-body label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+  color: #bbb;
+}
+#debug-body input[type=range] {
+  width: 100%;
+  accent-color: #e94560;
+}
+#debug-body span[id^="val"] {
+  color: #f9d71c;
+  font-weight: 700;
+}
+#debug-actions { margin-top: 6px; text-align: center; }
+#debug-export {
+  background: rgba(233,69,96,0.2);
+  border: 1px solid rgba(233,69,96,0.4);
+  color: #e94560; border-radius: 8px;
+  padding: 6px 16px; cursor: pointer;
+  font-size: 12px;
+}
+#debug-export:hover { background: rgba(233,69,96,0.35); }
+</style>
+
+<script>
+(function(){
+  const grid    = document.getElementById('character-grid');
+  const layout  = document.getElementById('main-layout');
+  const rp      = document.getElementById('result-panel');
+  const legend  = document.getElementById('legend-panel');
+  const header  = document.querySelector('header');
+  const title   = document.querySelector('.site-title');
+  const sub     = document.querySelector('.site-sub');
+  const btnCon  = document.getElementById('btn-confirm');
+  const btnRst  = document.getElementById('btn-reset');
+
+  // 应用初始值
+  function applyAll(){
+    const vals = getCurrentVals();
+    // 内容区宽
+    const mw = vals['main-maxw'] + 'px';
+    layout.style.maxWidth = mw;
+    if(rp) rp.style.maxWidth = mw;
+    // 卡片高
+    document.querySelectorAll('.char-card').forEach(c => c.style.height = vals['card-height']+'px');
+    // 格子间距
+    grid.style.gap = vals['grid-gap']+'px';
+    // 图例宽
+    legend.style.width = vals['legend-width']+'px';
+    // 字号
+    title.style.fontSize = vals['title-size']+'px';
+    sub.style.fontSize   = vals['sub-size']+'px';
+    btnCon.style.fontSize = vals['btn-size']+'px';
+    btnRst.style.fontSize = vals['btn-size']+'px';
+    document.querySelectorAll('.lv-num,.lv-name').forEach(el=>{
+      el.style.fontSize = vals['legend-font']+'px';
+    });
+    document.querySelectorAll('.char-name').forEach(el=>{
+      el.style.fontSize = vals['charname-size']+'px';
+    });
+    // header pad
+    header.style.paddingTop = vals['header-pad']+'vh';
+    // 卡片宽显示
+    const cards = document.querySelectorAll('.char-card');
+    if(cards.length) document.getElementById('val-cardw').textContent = Math.round(cards[0].getBoundingClientRect().width);
+  }
+
+  function getCurrentVals(){
+    return {
+      'main-maxw':     +document.querySelector('[data-prop="main-maxw"]')?.value || +document.querySelector('[data-target]')?.value || 1800,
+      'card-height':   +document.querySelector('[data-prop="card-height"]').value,
+      'grid-gap':      +document.querySelector('[data-prop="grid-gap"]').value,
+      'legend-width':  +document.querySelector('[data-prop="legend-width"]').value,
+      'title-size':    +document.querySelector('[data-prop="title-size"]').value,
+      'sub-size':      +document.querySelector('[data-prop="sub-size"]').value,
+      'btn-size':      +document.querySelector('[data-prop="btn-size"]').value,
+      'legend-font':   +document.querySelector('[data-prop="legend-font"]').value,
+      'charname-size': +document.querySelector('[data-prop="charname-size"]').value,
+      'header-pad':    +document.querySelector('[data-prop="header-pad"]').value,
+    };
+  }
+
+  // 内容区宽用 data-target 的那个滑块
+  const maxwSlider = document.querySelector('[data-target]');
+  maxwSlider.addEventListener('input', function(){
+    document.getElementById('val-maxw').textContent = this.value;
+    layout.style.maxWidth = this.value + 'px';
+    if(rp) rp.style.maxWidth = this.value + 'px';
+    setTimeout(()=>{
+      const cards = document.querySelectorAll('.char-card');
+      if(cards.length) document.getElementById('val-cardw').textContent = Math.round(cards[0].getBoundingClientRect().width);
+    }, 50);
+  });
+
+  // 其余滑块
+  const propMap = {
+    'card-height':   (v) => { document.querySelectorAll('.char-card').forEach(c=>c.style.height=v+'px'); document.getElementById('val-cardh').textContent=v; },
+    'grid-gap':      (v) => { grid.style.gap=v+'px'; document.getElementById('val-gap').textContent=v; },
+    'legend-width':  (v) => { legend.style.width=v+'px'; document.getElementById('val-legendw').textContent=v; },
+    'title-size':    (v) => { title.style.fontSize=v+'px'; document.getElementById('val-title').textContent=v; },
+    'sub-size':      (v) => { sub.style.fontSize=v+'px'; document.getElementById('val-sub').textContent=v; },
+    'btn-size':      (v) => { btnCon.style.fontSize=v+'px'; btnRst.style.fontSize=v+'px'; document.getElementById('val-btn').textContent=v; },
+    'legend-font':   (v) => { document.querySelectorAll('.lv-num,.lv-name').forEach(el=>el.style.fontSize=v+'px'); document.getElementById('val-legend-font').textContent=v; },
+    'charname-size': (v) => { document.querySelectorAll('.char-name').forEach(el=>el.style.fontSize=v+'px'); document.getElementById('val-charname').textContent=v; },
+    'header-pad':    (v) => { header.style.paddingTop=v+'vh'; document.getElementById('val-pad').textContent=v; },
+  };
+
+  document.querySelectorAll('[data-prop]').forEach(slider=>{
+    const prop = slider.dataset.prop;
+    if(propMap[prop]){
+      slider.addEventListener('input', function(){ propMap[prop](+this.value); });
+    }
+  });
+
+  // 收起/展开
+  document.getElementById('debug-toggle').addEventListener('click', function(){
+    const body = document.getElementById('debug-body');
+    if(body.style.display==='none'){ body.style.display=''; this.textContent='收起'; }
+    else { body.style.display='none'; this.textContent='展开'; }
+  });
+
+  // 复制参数
+  document.getElementById('debug-export').addEventListener('click', function(){
+    const v = getCurrentVals();
+    v['main-maxw'] = +maxwSlider.value;
+    const txt = JSON.stringify(v, null, 2);
+    navigator.clipboard.writeText(txt).then(()=>alert('已复制到剪贴板！\n\n'+txt));
+  });
+
+  // 等 script.js 渲染卡片后再 apply
+  setTimeout(applyAll, 300);
+  // 监听卡片新增
+  new MutationObserver(()=>{ setTimeout(applyAll,100); }).observe(grid,{childList:true});
+})();
+</script>
 </body>
 </html>
