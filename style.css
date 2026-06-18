@@ -74,14 +74,16 @@ header {
   max-width: 2560px;
 }
 
-#left-col { flex: 1; min-width: 0; }
+#left-col { flex: 1; min-width: 0; overflow-x: auto; }
 
 /* ---- Character Grid ---- */
 #character-grid {
   display: grid;
+  /* JS 会动态改为 repeat(5, Npx)；CSS 默认5列均分兜底 */
   grid-template-columns: repeat(5, 1fr);
   gap: 18px;
-  width: 100%;
+  width: max-content;   /* 让grid按内容宽度撑开，不被父级压缩 */
+  min-width: 100%;
 }
 
 .char-card {
